@@ -1,0 +1,257 @@
+﻿@model JobLyzerProject.ViewModels.RegisterStudentViewModel
+@{
+    ViewData["Title"] = "Candidate Onboarding Wizard";
+}
+
+<style>
+    /* 1. ALLOW SYSTEM-LEVEL VERTICAL SCROLLING */
+    html, body {
+        height: auto;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-y: auto; /* Adds a clean browser scrollbar when content exceeds window size */
+        background-color: #f4f6f9;
+    }
+
+    .auth-full-wrapper {
+        width: 100%;
+        padding: 30px 50px 50px 50px; /* Added extra bottom padding spacing */
+        box-sizing: border-box;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .auth-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .auth-subtitle {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    /* Responsive Horizontal Layout Grid Configuration */
+    .form-horizontal-grid {
+        display: flex;
+        gap: 40px;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    /* Responsive flex layout optimization for varying monitor shapes */
+    @@media (max-width: 992px) {
+        .form-horizontal-grid
+
+    {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    }
+
+    .grid-column-side {
+        flex: 1;
+        background: #ffffff;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #0f172a;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+    }
+
+        .form-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+            outline: none;
+        }
+
+    .section-divider {
+        border-bottom: 2px solid #3b82f6;
+        margin: 5px 0 20px 0;
+        padding-bottom: 6px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #2563eb;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit {
+        background-color: #2563eb;
+        color: #ffffff;
+        border: none;
+        width: 100%;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 20px;
+    }
+
+        .btn-submit:hover {
+            background-color: #1d4ed8;
+        }
+
+    .bottom-action-container {
+        padding-top: 20px;
+    }
+
+    .text-center-link {
+        text-align: center;
+        margin-top: 12px;
+        font-size: 0.9rem;
+    }
+
+        .text-center-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .text-center-link a:hover {
+                text-decoration: underline;
+            }
+
+    .text-danger {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 3px;
+        display: block;
+    }
+</style>
+
+
+<div class="auth-full-wrapper">
+    <div class="auth-header">
+        <h3 class="auth-title">Student Registration</h3>
+    </div>
+
+    <form asp-action="RegisterStudent" method="post" class="form-full-height">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-horizontal-grid">
+            <!-- LEFT COLUMN: Credentials & Resume File Pointer -->
+            <div class="grid-column-side">
+                <div>
+                    <div class="section-divider">1. Primary Authentication Details</div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" class="form-input" placeholder="you@domain.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">Account Password</label>
+                        <input asp-for="Password" class="form-input" type="password" placeholder="Minimum 6 characters" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                        <input asp-for="ConfirmPassword" class="form-input" type="password" placeholder="Repeat account password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <div class="section-divider" style="margin-top: 25px;">2. Resume Builder Reference</div>
+                    <div class="form-group">
+                        <label asp-for="ResumeFilePath" class="form-label">Resume Filename Reference</label>
+                        <input asp-for="ResumeFilePath" class="form-input" placeholder="e.g. Reshma_Resume.pdf" />
+                        <span asp-validation-for="ResumeFilePath" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Education, Experience & Dashboard Competency -->
+            <div class="grid-column-side">
+                <div>
+                    <div class="section-divider">3. Background Education & Work Log History</div>
+                    <div class="form-group">
+                        <label asp-for="HighestInstitution" class="form-label">University / College Title Name</label>
+                        <input asp-for="HighestInstitution" class="form-input" placeholder="e.g. Pune University" />
+                        <span asp-validation-for="HighestInstitution" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DegreeSpecialization" class="form-label">Degree / Course Specialization Major</label>
+                        <input asp-for="DegreeSpecialization" class="form-input" placeholder="e.g. B.E. Computer Science" />
+                        <span asp-validation-for="DegreeSpecialization" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LatestCompany" class="form-label">Most Recent Employer (or 'Fresher')</label>
+                        <input asp-for="LatestCompany" class="form-input" placeholder="e.g. Infosys or Fresher" />
+                        <span asp-validation-for="LatestCompany" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="LatestRole" class="form-label">Most Recent Functional Role (or 'Graduate')</label>
+                        <input asp-for="LatestRole" class="form-input" placeholder="e.g. Junior Web Developer" />
+                        <span asp-validation-for="LatestRole" class="text-danger"></span>
+                    </div>
+
+                    <div class="section-divider" style="margin-top: 25px;">4. Interactive Skill Dashboard Metric</div>
+                    <div style="display: flex; gap: 20px;">
+                        <div class="form-group" style="flex: 3;">
+                            <label asp-for="CoreTechnicalSkill" class="form-label">Technical Skill Name</label>
+                            <input asp-for="CoreTechnicalSkill" class="form-input" placeholder="e.g. C# .NET" />
+                            <span asp-validation-for="CoreTechnicalSkill" class="text-danger"></span>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label asp-for="CoreSkillProficiency" class="form-label">Proficiency (%)</label>
+                            <input asp-for="CoreSkillProficiency" type="number" min="1" max="100" class="form-input" value="80" />
+                            <span asp-validation-for="CoreSkillProficiency" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bottom-action-container">
+                    <button type="submit" class="btn-submit">Register Student</button>
+                    <div class="text-center-link">
+                        <a asp-action="Login">Already registered? Return to Login Portal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

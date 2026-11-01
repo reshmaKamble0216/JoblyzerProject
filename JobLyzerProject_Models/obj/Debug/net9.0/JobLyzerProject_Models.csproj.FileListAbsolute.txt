@@ -1,0 +1,14 @@
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\bin\Debug\net9.0\JobLyzerProject_Models.deps.json
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\bin\Debug\net9.0\JobLyzerProject_Models.runtimeconfig.json
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\bin\Debug\net9.0\JobLyzerProject_Models.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\bin\Debug\net9.0\JobLyzerProject_Models.pdb
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.csproj.AssemblyReference.cache
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.AssemblyInfoInputs.cache
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.AssemblyInfo.cs
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.csproj.CoreCompileInputs.cache
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\refint\JobLyzerProject_Models.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.pdb
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.genruntimeconfig.cache
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\ref\JobLyzerProject_Models.dll

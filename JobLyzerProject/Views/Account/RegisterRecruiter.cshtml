@@ -1,0 +1,227 @@
+﻿@model JobLyzerProject.ViewModels.RegisterRecruiterViewModel
+@{
+    ViewData["Title"] = "Corporate Recruiter Onboarding";
+}
+
+<style>
+    /* Allow native browser-level vertical scrolling comfortably */
+    html, body {
+        height: auto;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        overflow-y: auto;
+        background-color: #f4f6f9;
+    }
+
+    .auth-full-wrapper {
+        width: 100%;
+        padding: 30px 50px 50px 50px;
+        box-sizing: border-box;
+    }
+
+    .auth-header {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .auth-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0;
+    }
+
+    .auth-subtitle {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    /* Horizontal Split Flex Grid Configuration */
+    .form-horizontal-grid {
+        display: flex;
+        gap: 40px;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    /* Stack columns vertically on smaller tablet displays */
+    @@media (max-width: 992px) {
+        .form-horizontal-grid {
+            flex-direction: column;
+            gap: 20px;
+        }
+    }
+
+    .grid-column-side {
+        flex: 1;
+        background: #ffffff;
+        padding: 35px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        color: #0f172a;
+        box-sizing: border-box;
+        transition: all 0.2s ease;
+    }
+
+        .form-input:focus {
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+            outline: none;
+        }
+
+    .section-divider {
+        border-bottom: 2px solid #10b981;
+        margin: 5px 0 20px 0;
+        padding-bottom: 6px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #059669;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-submit {
+        background-color: #10b981;
+        color: #ffffff;
+        border: none;
+        width: 100%;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        margin-top: 20px;
+    }
+
+        .btn-submit:hover {
+            background-color: #059669;
+        }
+
+    .bottom-action-container {
+        padding-top: 20px;
+    }
+
+    .text-center-link {
+        text-align: center;
+        margin-top: 12px;
+        font-size: 0.9rem;
+    }
+
+        .text-center-link a {
+            color: #10b981;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+            .text-center-link a:hover {
+                text-decoration: underline;
+            }
+
+    .text-danger {
+        color: #ef4444;
+        font-size: 0.8rem;
+        margin-top: 3px;
+        display: block;
+    }
+</style>
+
+<div class="auth-full-wrapper">
+    <div class="auth-header">
+        <h3 class="auth-title">Recruiter Registration</h3>
+    </div>
+
+    <form asp-action="RegisterRecruiter" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="form-horizontal-grid">
+            <!-- LEFT CARD COLUMN: Corporate Credentials -->
+            <div class="grid-column-side">
+                <div>
+                    <div class="section-divider">1. Identification Credentials</div>
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label">Email Address</label>
+                        <input asp-for="Email" class="form-input" placeholder="recruiter@companydomain.com" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Password" class="form-label">Account Password</label>
+                        <input asp-for="Password" class="form-input" type="password" placeholder="Minimum 6 characters" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                        <input asp-for="ConfirmPassword" class="form-input" type="password" placeholder="Repeat account password" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT CARD COLUMN: Company Profile & Verification -->
+            <div class="grid-column-side">
+                <div>
+                    <div class="section-divider">2. Company Profile & Domain Verification</div>
+                    <div class="form-group">
+                        <label asp-for="CompanyName" class="form-label">Company Name</label>
+                        <input asp-for="CompanyName" class="form-input" placeholder="e.g. Microsoft India, Tata Consulting" />
+                        <span asp-validation-for="CompanyName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="CompanyWebsite" class="form-label">Company Official Website Domain URL</label>
+                        <input asp-for="CompanyWebsite" class="form-input" placeholder="https://yourcompanydomain.com" />
+                        <span asp-validation-for="CompanyWebsite" class="text-danger"></span>
+                    </div>
+
+                    <div class="section-divider" style="margin-top: 25px;">3. Team Management Capacity</div>
+                    <div class="form-group">
+                        <label asp-for="TeamSizeAllocation" class="form-label">Initial Team Seat Seating Capacity</label>
+                        <input asp-for="TeamSizeAllocation" type="number" min="1" max="100" class="form-input" value="5" />
+                        <span asp-validation-for="TeamSizeAllocation" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="bottom-action-container">
+                    <button type="submit" class="btn-submit">Register Recruiter</button>
+                    <div class="text-center-link">
+                        <a asp-action="Login">Already registered? Return to Login Portal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

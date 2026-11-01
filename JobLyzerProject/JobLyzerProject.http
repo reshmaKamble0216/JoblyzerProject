@@ -1,0 +1,6 @@
+@JobLyzerProject_HostAddress = http://localhost:5030
+
+GET {{JobLyzerProject_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
