@@ -160,3 +160,11 @@ C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\JobL
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\obj\Debug\net9.0\JobLyzerProject.RazorAssemblyInfo.cache
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\obj\Debug\net9.0\JobLyzerProject.RazorAssemblyInfo.cs
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\BCrypt.Net-Next.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\obj\Debug\net9.0\JobLyzerProject.sourcelink.json
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\Scalar.AspNetCore.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\Swashbuckle.AspNetCore.Annotations.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.ConventionalRouting.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll

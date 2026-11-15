@@ -1,5 +1,381 @@
 [
   {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "Login",
+    "RelativePath": "api/Account/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "RegisterAdmin",
+    "RelativePath": "api/Account/register-admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.RegisterAdminDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "RegisterRecruiter",
+    "RelativePath": "api/Account/register-recruiter",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "JobLyzerProject.Controllers.RegisterRecruiterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "RegisterStudent",
+    "RelativePath": "api/Account/register-student",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.RegisterStudentDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AdminController",
+    "Method": "GetDashboardStats",
+    "RelativePath": "api/Admin/dashboard-stats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AdminController",
+    "Method": "Login",
+    "RelativePath": "api/Admin/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.AdminLoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AdminController",
+    "Method": "Register",
+    "RelativePath": "api/Admin/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.AdminRegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AdminController",
+    "Method": "GetAllUsers",
+    "RelativePath": "api/Admin/users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "role",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AdminController",
+    "Method": "DeleteUser",
+    "RelativePath": "api/Admin/users/{userId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "userId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AdminController",
+    "Method": "ChangeUserRole",
+    "RelativePath": "api/Admin/users/role",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.ChangeUserRoleDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "Login",
+    "RelativePath": "api/auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "RegisterAdmin",
+    "RelativePath": "api/auth/register-admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.RegisterAdminDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "RegisterRecruiter",
+    "RelativePath": "api/auth/register-recruiter",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "req",
+        "Type": "JobLyzerProject.Controllers.RegisterRecruiterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.AccountController",
+    "Method": "RegisterStudent",
+    "RelativePath": "api/auth/register-student",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.RegisterStudentDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.RecruiterController",
+    "Method": "UpdateCompany",
+    "RelativePath": "api/Recruiter/company",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.CompanyUpdateDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.RecruiterController",
+    "Method": "Login",
+    "RelativePath": "api/Recruiter/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.RecruiterLoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.RecruiterController",
+    "Method": "GetProfile",
+    "RelativePath": "api/Recruiter/profile",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.RecruiterController",
+    "Method": "Register",
+    "RelativePath": "api/Recruiter/register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.RecruiterRegisterDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.RecruiterController",
+    "Method": "AddTeamMember",
+    "RelativePath": "api/Recruiter/team",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.TeamMemberAddDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.RecruiterController",
+    "Method": "RemoveTeamMember",
+    "RelativePath": "api/Recruiter/team/{memberUserId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "memberUserId",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.RecruiterController",
+    "Method": "VerifyWebsite",
+    "RelativePath": "api/Recruiter/verify-website",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.StudentController",
+    "Method": "GetDashboard",
+    "RelativePath": "api/Student/dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.StudentController",
+    "Method": "UpdateProfile",
+    "RelativePath": "api/Student/profile",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.UpdateProfileDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.StudentController",
+    "Method": "AddOrUpdateSkill",
+    "RelativePath": "api/Student/skills",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "JobLyzerProject.Controllers.StudentSkillDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "JobLyzerProject.Controllers.StudentController",
+    "Method": "UploadResume",
+    "RelativePath": "api/Student/upload-resume",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "file",
+        "Type": "Microsoft.AspNetCore.Http.IFormFile",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "JobLyzerProject.Controllers.WeatherForecastController",
     "Method": "Get",
     "RelativePath": "WeatherForecast",

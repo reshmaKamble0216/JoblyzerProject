@@ -1,9 +1,10 @@
-﻿using System;
+﻿using JobLyzerProject_Models.Models;
+using JobLyzerProject_Services.Interfaces;
+using JobLyzerProject_Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using JobLyzerProject_Models.Models;
-using JobLyzerProject_Services.Interfaces;
 
 namespace JoblyzerProject_Services.Implementations
 {
@@ -16,184 +17,151 @@ namespace JoblyzerProject_Services.Implementations
             _context = context;
         }
 
-        public async Task<User> ValidateUserAsync(string email, string password)
+        public async Task<User?> ValidateUserAsync(string email, string password)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)) return null;
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Email == email);
+
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+                return null;
+
             return user;
         }
 
-
-
-   public async Task<bool> RegisterStudentWithProfileAsync(
-    string email,
-    string password,
-    string resumePath,
-    string institution,
-    string degree,
-    string company,
-    string role,
-    string skillName,
-    int proficiency)
+        public async Task<(bool Success, string Message)> RegisterStudentAsync(
+            string fullName,
+            string email,
+            string password,
+            string? headline,
+            string? resumeUrl,
+            int? graduationYear)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == email)) return false;
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+                return (false, "Email is already registered.");
 
-            // 1. Create Core Base Authentication User Record
+            var studentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Student");
+            if (studentRole == null)
+                return (false, "Student role not found in database.");
+
             var user = new User
             {
+                Id = Guid.NewGuid(),
+                FullName = fullName,
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                UserType = 0, // 0: Student
-                RoleId = 1,   // 1: Student Role ID lookup
-                IsActive = true,
-                AccessFailedCount = 0,
+                RoleId = studentRole.Id,
                 CreatedAt = DateTime.UtcNow
             };
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
 
-            // 2. Create the Master 1:1 Student Profile entry mapping the Resume Builder pointer
-            var studentProfile = new StudentProfile
+            _context.Users.Add(user);
+            _context.StudentProfiles.Add(new StudentProfile
             {
                 UserId = user.Id,
-                ResumeFilePath = resumePath
-            };
-            _context.StudentProfiles.Add(studentProfile);
+                Headline = headline,
+                ResumeUrl = resumeUrl,
+                GraduationYear = graduationYear
+            });
+
             await _context.SaveChangesAsync();
-
-            // 3. Seed Initial Education History entry records
-            var education = new Education
-            {
-                StudentUserId = user.Id,
-                Institution = institution,
-                Degree = degree,
-                StartDate = DateTime.UtcNow.AddYears(-3) // Approximate historical window mapping
-            };
-            _context.Educations.Add(education);
-
-            // 4. Seed Initial Work Experience timeline logging parameters
-            var experience = new Experience
-            {
-                StudentUserId = user.Id,
-                CompanyName = company,
-                Role = role,
-                StartDate = DateTime.UtcNow.AddYears(-1)
-            };
-            _context.Experiences.Add(experience);
-
-            // 5. Seed Core Interactive Skill Dashboard Matrix rating parameters
-            var skill = new StudentSkill
-            {
-                StudentUserId = user.Id,
-                SkillName = skillName,
-                ProficiencyPercentage = proficiency
-            };
-            _context.StudentSkills.Add(skill);
-
-            // Save all subsequent sub-data profile entries atomically
-            await _context.SaveChangesAsync();
-            return true;
+            return (true, "Student registered successfully.");
         }
 
-        public async Task<bool> RegisterRecruiterAsync(string email, string password, string companyName, string companyWebsite)
+        public async Task<(bool Success, string Message)> RegisterRecruiterAsync(
+            string fullName,
+            string email,
+            string password,
+            string companyName,
+            string? companyWebsite)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == email)) return false;
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+                return (false, "Corporate email is already registered.");
 
-            // Recruiter validation rules (match email domain to corporate domain)
-            string emailDomain = email.Split('@').Last().ToLower();
-            string webDomain = companyWebsite.Replace("https://", "").Replace("http://", "").Replace("www.", "").Split('/').First().ToLower();
-            bool isVerified = emailDomain == webDomain && emailDomain != "gmail.com" && emailDomain != "yahoo.com";
+            var recruiterRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Recruiter");
+            if (recruiterRole == null)
+                return (false, "Recruiter role not found in database.");
 
-            var company = new Company { Name = companyName, Website = companyWebsite, IsVerified = isVerified };
-            _context.Companies.Add(company);
-            await _context.SaveChangesAsync();
+            bool isVerified = false;
+            if (!string.IsNullOrWhiteSpace(companyWebsite) && email.Contains('@'))
+            {
+                string emailDomain = email.Split('@').Last().ToLower();
+                string webDomain = companyWebsite
+                    .Replace("https://", "")
+                    .Replace("http://", "")
+                    .Replace("www.", "")
+                    .Split('/')
+                    .First()
+                    .ToLower();
+
+                isVerified = emailDomain == webDomain
+                    && emailDomain != "gmail.com"
+                    && emailDomain != "yahoo.com"
+                    && emailDomain != "outlook.com";
+            }
 
             var user = new User
             {
+                Id = Guid.NewGuid(),
+                FullName = fullName,
                 Email = email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                UserType = 1, // 1: Recruiter
-                RoleId = 2,   // 'Recruiter' Role ID
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            _context.RecruiterProfiles.Add(new RecruiterProfile { UserId = user.Id, CompanyId = company.Id, IsPrimaryContact = true });
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        public async Task<bool> RegisterAdminAsync(string email, string password)
-        {
-            // Check if the administrator account profile email is already registered in the matrix
-            if (await _context.Users.AnyAsync(u => u.Email == email)) return false;
-
-            var user = new User
-            {
-                Email = email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password), // Direct BCrypt secure hashing conversion
-                UserType = 2, // 2: Admin
-                RoleId = 3,   // 'Admin' Role ID from lookup seed
-                IsActive = true,
+                RoleId = recruiterRole.Id,
                 CreatedAt = DateTime.UtcNow
             };
 
             _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-
-        public async Task<bool> RegisterRecruiterAsync(string email, string password, string companyName, string companyWebsite, int teamSizeAllocation)
-        {
-            if (await _context.Users.AnyAsync(u => u.Email == email)) return false;
-
-            // --- AUTOMATED WEBSITE VERIFICATION LOGIC ---
-            string emailDomain = email.Split('@').Last().ToLower();
-            string webDomain = companyWebsite.Replace("https://", "").Replace("http://", "").Replace("www.", "").Split('/').First().ToLower();
-
-            // Auto-verify if corporate email domain matches company website domain (blocks public email hosts)
-            bool isVerified = emailDomain == webDomain && emailDomain != "gmail.com" && emailDomain != "yahoo.com" && emailDomain != "outlook.com";
-
-            // 1. Create and Seed Company Profile Entity Data
-            var company = new Company
-            {
-                Name = companyName,
-                Website = companyWebsite,
-                IsVerified = isVerified // Stores verification state directly
-            };
-            _context.Companies.Add(company);
-            await _context.SaveChangesAsync();
-
-            // 2. Create Core Base Authentication User Record
-            var user = new User
-            {
-                Email = email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                UserType = 1, // 1: Recruiter
-                RoleId = 2,   // 2: Recruiter Role
-                IsActive = true,
-                AccessFailedCount = 0,
-                CreatedAt = DateTime.UtcNow
-            };
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-
-            // 3. Create Recruiter Profile Meta-Record mapping Team Allocation Constraints
-            var recruiterProfile = new RecruiterProfile
+            _context.RecruiterProfiles.Add(new RecruiterProfile
             {
                 UserId = user.Id,
-                CompanyId = company.Id,
-                IsPrimaryContact = true
-                // Note: If your scaffolded table doesn't have an explicit column for TeamSizeAllocation, 
-                // it initializes the workspace session context mapping using the company reference key link.
-            };
-            _context.RecruiterProfiles.Add(recruiterProfile);
-            await _context.SaveChangesAsync();
+                CompanyName = companyName,
+                CompanyWebsite = companyWebsite,
+               
+            });
 
-            return true;
+            await _context.SaveChangesAsync();
+            return (true, "Recruiter registered successfully.");
         }
 
+        public async Task<(bool Success, string Message)> RegisterAdminAsync(
+            string fullName,
+            string email,
+            string password)
+        {
+            if (await _context.Users.AnyAsync(u => u.Email == email))
+                return (false, "Admin email is already registered.");
+
+            var adminRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+            if (adminRole == null)
+                return (false, "Admin role not found in database.");
+
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                FullName = fullName,
+                Email = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
+                RoleId = adminRole.Id,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+            return (true, "Admin registered successfully.");
+        }
+
+        public Task<bool> RegisterStudentWithProfileAsync(string email, string password, string resumePath, string institution, string degree, string company, string role, string skillName, int proficiency)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RegisterRecruiterAsync(string email, string password, string companyName, string companyWebsite, int teamSizeAllocation)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> RegisterAdminAsync(string email, string password)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

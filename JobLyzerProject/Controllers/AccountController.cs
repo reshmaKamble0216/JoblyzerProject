@@ -1,173 +1,246 @@
-﻿using JobLyzerProject.ViewModels;
-using JobLyzerProject_Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using JobLyzerProject_Models.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace JoblyzerProject.Controllers
+namespace JobLyzerProject.Controllers
 {
-    public class AccountController : Controller
-    {
-        private readonly IAuthService _authService;
+    public record LoginRequest(string Email, string Password);
+    public record RegisterStudentDto(
+        string FullName,
+        string Email,
+        string Password,
+        string? Headline,
+        int? GraduationYear,
+        string? ResumeUrl
+    );
+    public record RegisterRecruiterRequest(string FullName, string Email, string Password, string CompanyName, string CompanyWebsite);
 
-        public AccountController(IAuthService authService)
+    public record RegisterAdminDto(
+    string FullName,
+    string Email,
+    string Password
+);
+
+
+    [ApiController]
+    [Route("api/[controller]")]
+    [Route("api/auth")]
+
+    public class AccountController : ControllerBase
+    {
+        private readonly JobPlatformContext _context;
+        private readonly IConfiguration _config;
+
+        public AccountController(JobPlatformContext context, IConfiguration config)
         {
-            _authService = authService;
+            _context = context;
+            _config = config;
         }
 
-        // --- SHARED LOGIN CORE VIEW ---
-        [HttpGet]
-        public IActionResult Login() => View();
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
+       
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest dto)
         {
-            if (!ModelState.IsValid) return View(model);
+            var user = await _context.Users
+                .Include(u => u.Role)
+                .FirstOrDefaultAsync(u => u.Email == dto.Email);
 
-            // 1. Authenticate user credentials against the database repository layer
-            var user = await _authService.ValidateUserAsync(model.Email, model.Password);
             if (user == null)
-            {
-                ModelState.AddModelError("", "Invalid login credentials.");
-                return View(model);
-            }
+                return Unauthorized(new { message = "Invalid email or password." });
 
-            // 2. Build explicit role-based identity claims (0: Student, 1: Recruiter, 2: Admin)
+            bool isPasswordValid = user.PasswordHash.StartsWith("$2")
+                ? BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash)
+                : user.PasswordHash == dto.Password;
+
+            if (!isPasswordValid)
+                return Unauthorized(new { message = "Invalid email or password." });
+
+            var roleName = user.Role?.Name ?? "Student";
+            var token = GenerateJwtToken(user, roleName);
+
+            return Ok(new
+            {
+                token,
+                userId = user.Id,
+                fullName = user.FullName,
+                email = user.Email,
+                role = roleName
+            });
+        }
+
+
+        private string GenerateJwtToken(User user, string roleName)
+        {
+            var rawKey = _config["Jwt:Key"] ?? "SuperSecretJobLyzerKey2026_MustBe32Chars!";
+            if (rawKey.Length < 32)
+                rawKey = rawKey.PadRight(32, '_');
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(rawKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.UserType == 0 ? "Student" : (user.UserType == 1 ? "Recruiter" : "Admin"))
+                new Claim(ClaimTypes.Name, user.FullName ?? user.Email),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, roleName)
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"] ?? "JobLyzerAPI",
+                audience: _config["Jwt:Audience"] ?? "JobLyzerUI",
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(8),
+                signingCredentials: creds
+            );
 
-            // 3. Issue the secure browser session tracking cookie ticket
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+
+        [HttpPost("register-student")]
+        public async Task<IActionResult> RegisterStudent([FromBody] RegisterStudentDto dto)
+        {
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+                return BadRequest(new { message = "Email is already registered." });
+
+            var studentRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Student");
+            if (studentRole == null)
             {
-                IsPersistent = model.RememberMe
+                studentRole = new Role
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Student"
+                };
+                _context.Roles.Add(studentRole);
+                await _context.SaveChangesAsync();
+            }
+
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                FullName = dto.FullName,
+                Email = dto.Email,
+                PasswordHash = dto.Password,
+                RoleId = studentRole.Id,
+                CreatedAt = DateTime.UtcNow
+            };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var studentProfile = new StudentProfile
+            {
+                UserId = user.Id,
+                Headline = dto.Headline,
+                GraduationYear = dto.GraduationYear,
+                ResumeUrl = dto.ResumeUrl
+            };
+            _context.StudentProfiles.Add(studentProfile);
+            await _context.SaveChangesAsync();
+
+            var token = GenerateJwtToken(user, "Student");
+
+            return Ok(new
+            {
+                message = "Student registered successfully.",
+                token,
+                userId = user.Id,
+                fullName = user.FullName,
+                email = user.Email,
+                role = "Student"
             });
-
-            // 4. Redirect all authenticated entities directly to the landing cockpit
-            return RedirectToAction("WelcomeIndex");
         }
 
-        // --- STUDENT SIGNUP FLOW ---
-        [HttpGet]
-        public IActionResult RegisterStudent() => View();
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterStudent(RegisterStudentViewModel model)
+        [HttpPost("register-recruiter")]
+        public async Task<IActionResult> RegisterRecruiter([FromBody] RegisterRecruiterRequest req)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (await _context.Users.AnyAsync(u => u.Email == req.Email))
+                return BadRequest(new { message = "Email already registered." });
 
-            bool success = await _authService.RegisterStudentWithProfileAsync(
-                model.Email,
-                model.Password,
-                model.ResumeFilePath,
-                model.HighestInstitution,
-                model.DegreeSpecialization,
-                model.LatestCompany,
-                model.LatestRole,
-                model.CoreTechnicalSkill,
-                model.CoreSkillProficiency
-            );
-
-            if (success)
+            var role = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Recruiter");
+            if (role == null)
             {
-                TempData["SuccessMessage"] = "Student profile registered successfully! Sign in here.";
-                return RedirectToAction(nameof(Login));
+                role = new Role { Id = Guid.NewGuid(), Name = "Recruiter" };
+                _context.Roles.Add(role);
+                await _context.SaveChangesAsync();
             }
 
-            ModelState.AddModelError("", "This email address is already tied to an active candidate record.");
-            return View(model);
+            var user = new User
+            {
+                Id = Guid.NewGuid(),
+                FullName = req.FullName,
+                Email = req.Email,
+                PasswordHash = req.Password,
+                RoleId = role.Id,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            _context.RecruiterProfiles.Add(new RecruiterProfile
+            {
+                UserId = user.Id,
+                CompanyName = req.CompanyName,
+                CompanyWebsite = req.CompanyWebsite
+            });
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Recruiter registered successfully." });
         }
 
-        // --- RECRUITER SIGNUP FLOW ---
-        [HttpGet]
-        public IActionResult RegisterRecruiter() => View();
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterRecruiter(RegisterRecruiterViewModel model)
+        [HttpPost("register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminDto dto)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+                return BadRequest(new { message = "Email is already registered." });
 
-            bool success = await _authService.RegisterRecruiterAsync(
-                model.Email,
-                model.Password,
-                model.CompanyName,
-                model.CompanyWebsite,
-                model.TeamSizeAllocation
-            );
-
-            if (success)
+            var adminRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+            if (adminRole == null)
             {
-                TempData["SuccessMessage"] = "Corporate Recruiter account registered successfully! Sign in here.";
-                return RedirectToAction(nameof(Login));
+                adminRole = new Role
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Admin"
+                };
+                _context.Roles.Add(adminRole);
+                await _context.SaveChangesAsync();
             }
 
-            ModelState.AddModelError("", "This corporate email address is already registered.");
-            return View(model);
-        }
-
-        // --- ADMIN SIGNUP FLOW ---
-        [HttpGet]
-        public IActionResult RegisterAdmin() => View();
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterAdmin(RegisterAdminViewModel model)
-        {
-            // Bypass the security token model field check since we removed it from the UI form view
-            ModelState.Remove("AdminSecurityToken");
-
-            if (!ModelState.IsValid) return View(model);
-
-            bool success = await _authService.RegisterAdminAsync(model.Email, model.Password);
-            if (success)
+            var user = new User
             {
-                TempData["SuccessMessage"] = "System Administration account provisioned successfully! Sign in here.";
-                return RedirectToAction(nameof(Login));
-            }
+                Id = Guid.NewGuid(),
+                FullName = dto.FullName,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                RoleId = adminRole.Id,
+                CreatedAt = DateTime.UtcNow
+            };
 
-            ModelState.AddModelError("", "This administrative email address is already registered.");
-            return View(model);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            var token = GenerateJwtToken(user, "Admin");
+
+            return Ok(new
+            {
+                message = "Admin registered successfully.",
+                token,
+                userId = user.Id,
+                fullName = user.FullName,
+                email = user.Email,
+                role = "Admin"
+            });
         }
 
-        // --- AUTHENTICATION PORTAL LANDING COCKPIT ---
-        [HttpGet]
-        public IActionResult WelcomeIndex()
-        {
-            string activeRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "None";
-
-            // Provides a clean, styled landing dashboard frame confirming successful session parsing
-            return Content($@"
-                <div style='font-family:""Segoe UI"",sans-serif; max-width:600px; margin:60px auto; padding:40px; background:#fff; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.06); border-top: 5px solid #2563eb;'>
-                    <h2 style='color:#1e293b; margin-top:0;'>{activeRole} Login Successful!</h2>
-                    <p style='color:#64748b; font-size:0.95rem;'>You have signed in successfully to the Joblyzer workspace control gateway.</p>
-                    <hr style='border:0; border-top:1px solid #e2e8f0; margin:25px 0;' />
-                    <div style='margin-bottom:12px; font-size:1rem; color:#334155;'><strong>Active Identity Account:</strong> {User.Identity.Name}</div>
-                    <div style='margin-bottom:25px; font-size:1rem; color:#334155;'><strong>Assigned Security Scope:</strong> 
-                        <span style='background:#dbeafe; color:#1e40af; padding:4px 12px; border-radius:20px; font-size:0.85rem; font-weight:bold; margin-left:5px;'>{activeRole}</span>
-                    </div>
-                    <a href='/Account/Logout' style='display:inline-block; background:#1e293b; color:#fff; padding:12px 24px; text-decoration:none; border-radius:8px; font-weight:600; font-size:0.95rem; transition: background 0.2s;'>Sign Out</a>
-                </div>", "text/html");
-        }
-
-        // --- SESSION LOGOUT TERMINATION ---
-        [HttpGet]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction(nameof(Login));
-        }
     }
 }

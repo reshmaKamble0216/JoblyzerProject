@@ -5,15 +5,13 @@ namespace JobLyzerProject_Models.Models;
 
 public partial class StudentProfile
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
-    public string? ResumeFilePath { get; set; }
+    public string? Headline { get; set; }
 
-    public virtual ICollection<Education> Educations { get; set; } = new List<Education>();
+    public string? ResumeUrl { get; set; }
 
-    public virtual ICollection<Experience> Experiences { get; set; } = new List<Experience>();
-
-    public virtual ICollection<StudentSkill> StudentSkills { get; set; } = new List<StudentSkill>();
+    public int? GraduationYear { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

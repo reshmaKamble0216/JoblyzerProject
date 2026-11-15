@@ -5,13 +5,11 @@ namespace JobLyzerProject_Models.Models;
 
 public partial class RecruiterProfile
 {
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
-    public int CompanyId { get; set; }
+    public string CompanyName { get; set; } = null!;
 
-    public bool IsPrimaryContact { get; set; }
-
-    public virtual Company Company { get; set; } = null!;
+    public string? CompanyWebsite { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

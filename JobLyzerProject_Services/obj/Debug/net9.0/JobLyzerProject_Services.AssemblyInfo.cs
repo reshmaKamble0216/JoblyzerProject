@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("JobLyzerProject_Services")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7db8990718c6a1dcd9d972928fb4715a1416baa8")]
 [assembly: System.Reflection.AssemblyProductAttribute("JobLyzerProject_Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("JobLyzerProject_Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

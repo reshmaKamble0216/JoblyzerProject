@@ -1,0 +1,3 @@
+Server=DESKTOP-E408G7J\SQLEXPRESS;Database=JobPlatformDB;Trusted_Connection=True;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context JobPlatformContext -Project JoblyzerProject_Models -StartupProject JoblyzerProject -Force
+ Scaffold-DbContext "Server=89.106.69.104;Database=JobLyzerDB;User Id=jobuser;Password=YSAAS#2026;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context JobPlatformContext -Force
+ Scaffold-DbContext "Server=89.106.69.104;Database=JobLyzerDB;User Id=jobuser;Password=YSAAS#2026;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Context JobPlatformContext -StartupProject JobLyzerProject_Models -Force

@@ -8,8 +8,9 @@ C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\ne
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzerProject_Services.AssemblyInfoInputs.cache
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzerProject_Services.AssemblyInfo.cs
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzerProject_Services.csproj.CoreCompileInputs.cache
-C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzer.CB263888.Up2Date
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzerProject_Services.dll
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\refint\JobLyzerProject_Services.dll
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzerProject_Services.pdb
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\ref\JobLyzerProject_Services.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzerProject_Services.sourcelink.json
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Services\obj\Debug\net9.0\JobLyzer.CB263888.Up2Date

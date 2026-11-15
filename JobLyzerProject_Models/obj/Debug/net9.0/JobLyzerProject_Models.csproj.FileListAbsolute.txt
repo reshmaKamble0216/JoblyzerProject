@@ -12,3 +12,4 @@ C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.pdb
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.genruntimeconfig.cache
 C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\ref\JobLyzerProject_Models.dll
+C:\Users\priit\Desktop\new\JobLyzerProject\JobLyzerProject_Models\obj\Debug\net9.0\JobLyzerProject_Models.sourcelink.json
