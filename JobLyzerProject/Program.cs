@@ -8,10 +8,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<IEmailService, EmailService>();
+// 1. Database Connection (Reads directly from appsettings.json)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json.");
 
-// 1. Database Connection
 builder.Services.AddDbContext<JobPlatformContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(connectionString, sqlOptions =>
+        sqlOptions.EnableRetryOnFailure()));
+
 
 // 2. Authentication (JWT Bearer for Angular + Cookies for MVC)
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "SuperSecretJobLyzerKey2026_MustBe32Chars!";
@@ -51,19 +56,21 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 5. CORS Policy for Angular (http://localhost:4200)
+// 2.  CORS Allow
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAngular", policy =>
+    options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")
+        policy.AllowAnyOrigin()
               .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+              .AllowAnyMethod();
     });
 });
 
 var app = builder.Build();
+
+// 3. Pipeline 
+app.UseCors("AllowAll");
 
 // CORS MUST run first before redirection or auth so OPTIONS preflight succeeds
 app.UseCors("AllowAngular");

@@ -588,9 +588,8 @@
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.0"
         },
         "runtime": {
-          "JobLyzerProject_Models.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "1.0.0.0"
+          "JoblyzerProject_Models.dll": {
+            "fileVersion": "0.0.0.0"
           }
         }
       }
