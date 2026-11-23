@@ -7,19 +7,35 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+// Ensure wwwroot folder exists before CreateBuilder runs (fixes DirectoryNotFoundException)
+var wwwrootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+if (!Directory.Exists(wwwrootPath))
+{
+    Directory.CreateDirectory(wwwrootPath);
+}
+
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddScoped<IEmailService, EmailService>();
-// 1. Database Connection (Reads directly from appsettings.json)
+
+// 1. Database Connection (Reads from appsettings.json with retry resiliency)
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found in appsettings.json.");
 
 builder.Services.AddDbContext<JobPlatformContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions =>
-        sqlOptions.EnableRetryOnFailure()));
-
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(10),
+            errorNumbersToAdd: null);
+        sqlOptions.CommandTimeout(60);
+    }));
 
 // 2. Authentication (JWT Bearer for Angular + Cookies for MVC)
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "SuperSecretJobLyzerKey2026_MustBe32Chars!";
+if (jwtKey.Length < 32)
+{
+    jwtKey = jwtKey.PadRight(32, '_');
+}
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "JobLyzerAPI";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "JobLyzerUI";
 
@@ -50,13 +66,14 @@ builder.Services.AddAuthentication(options =>
 
 // 3. Application Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // 4. Controllers & Swagger
 builder.Services.AddControllersWithViews();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 2.  CORS Allow
+// 5. CORS Policy (Allows all origins for Angular & external clients)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
@@ -69,11 +86,8 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// 3. Pipeline 
+// 6. HTTP Request Pipeline
 app.UseCors("AllowAll");
-
-// CORS MUST run first before redirection or auth so OPTIONS preflight succeeds
-app.UseCors("AllowAngular");
 
 app.UseSwagger();
 app.UseSwaggerUI(options =>

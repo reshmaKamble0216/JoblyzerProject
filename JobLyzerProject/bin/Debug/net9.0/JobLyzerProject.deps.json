@@ -1037,8 +1037,9 @@
           "Microsoft.EntityFrameworkCore": "9.0.0"
         },
         "runtime": {
-          "JoblyzerProject_Services.dll": {
-            "fileVersion": "0.0.0.0"
+          "JobLyzerProject_Services.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
           }
         }
       }

@@ -6,14 +6,14 @@
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v9.0": {
-      "JoblyzerProject_Models/1.0.0": {
+      "JobLyzerProject_Models/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore.Design": "9.0.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "9.0.0",
           "Microsoft.EntityFrameworkCore.Tools": "9.0.0"
         },
         "runtime": {
-          "JoblyzerProject_Models.dll": {}
+          "JobLyzerProject_Models.dll": {}
         }
       },
       "Azure.Core/1.38.0": {
@@ -997,7 +997,7 @@
     }
   },
   "libraries": {
-    "JoblyzerProject_Models/1.0.0": {
+    "JobLyzerProject_Models/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
